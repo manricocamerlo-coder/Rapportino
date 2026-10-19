@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costruzioni Generali Camerlo - Rapportini</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0F2D52;--blue2:#1A4A8A;--accent:#FF7A00;--bg:#F6F8FB;--card:#FFFFFF;--border:#E6ECF5;--text:#1B2A41;--muted:#7A8BA6;--green:#1B8A5A}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',Arial,sans-serif}
+body{background:var(--bg);color:var(--text);padding-bottom:100px}
+.header{background:linear-gradient(135deg,var(--blue) 0%, var(--blue2) 100%);color:#fff;padding:16px 18px;position:sticky;top:0;z-index:20;box-shadow:0 4px 20px rgba(15,45,82,0.3)}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px}
+.logo-text b{display:block;font-size:13px;letter-spacing:0.8px;line-height:1.1}
+.logo-text span{display:block;font-size:10px;opacity:0.8;letter-spacing:1px;margin-top:2px}
+.badge-count{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800;border:1px solid rgba(255,255,255,0.2)}
+.nav{display:flex;background:var(--card);padding:8px;border-bottom:1px solid var(--border);gap:6px;overflow-x:auto;position:sticky;top:68px;z-index:15;box-shadow:0 2px 10px rgba(0,0,0,0.03)}
+.nav button{flex:1;min-width:80px;padding:10px 10px;border-radius:10px;border:none;background:var(--bg);font-weight:700;font-size:11px;color:var(--muted);cursor:pointer;transition:0.2s}
+.nav button.active{background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(15,45,82,0.25)}
+.container{max-width:700px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(15,45,82,0.04)}
+.card-title{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title::before{content:'';width:4px;height:14px;background:var(--accent);border-radius:4px;display:inline-block}
+label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 4px 0;display:block}
+input,select,textarea{width:100%;padding:12px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;background:#FBFCFE;transition:0.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(26,74,138,0.1)}
+textarea{min-height:90px;resize:vertical}
+.btn{padding:12px 14px;border-radius:12px;border:none;font-weight:800;font-size:13px;cursor:pointer;transition:0.2s}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;width:100%;box-shadow:0 4px 16px rgba(15,45,82,0.25)}
+.btn-primary:active{transform:scale(0.98)}
+.btn-success{background:var(--green);color:#fff;width:100%}
+.btn-ghost{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+.btn-small{padding:7px 10px;font-size:11px;border-radius:8px}
+.row{display:flex;gap:8px;margin-bottom:8px;align-items:flex-end}
+.item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:#FBFCFE}
+.item b{font-size:13px}
+.hidden{display:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.hint{font-size:10px;color:var(--muted);margin-top:6px;background:#F6F8FB;padding:8px 10px;border-radius:8px;border-left:3px solid var(--accent)}
+.footer-note{text-align:center;font-size:10px;color:var(--muted);margin-top:20px;letter-spacing:0.5px}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="header-top">
+<div class="logo"><div class="logo-mark">C</div><div class="logo-text"><b>COSTRUZIONI GENERALI</b><b>CAMERLO S.R.L.</b><span>COSTRUZIONI EDILI - RISTRUTTURAZIONI</span></div></div>
+<div class="badge-count" id="tot">0 RAPPORTINI</div>
+</div>
+</div>
+<div class="nav">
+<button class="active" onclick="showTab('rapportino')" id="b-rapportino">RAPPORTINO</button>
+<button onclick="showTab('cantieri')" id="b-cantieri">CANTIERI</button>
+<button onclick="showTab('dipendenti')" id="b-dipendenti">DIPENDENTI</button>
+<button onclick="showTab('ditte')" id="b-ditte">DITTE</button>
+<button onclick="showTab('archivio')" id="b-archivio">ARCHIVIO</button>
+</div>
+<div class="container">
+<div id="tab-rapportino">
+<div class="card"><div class="card-title">Cantiere e Data</div>
+<div style="display:flex;gap:10px"><div style="flex:1.2"><label>Cantiere / Commessa *</label><select id="sel-cantiere"></select></div><div style="flex:0.8"><label>Data *</label><input type="date" id="data"></div></div>
+<div style="display:flex;gap:10px;margin-top:8px"><div style="flex:1"><label>Meteo</label><select id="meteo"><option>Sole</option><option>Nuvoloso</option><option>Pioggia</option><option>Neve</option><option>Nebbia</option></select></div><div style="flex:1"><label>Orario Lavoro</label><input id="orario" value="08:00 - 17:00"></div></div>
+</div>
+<div class="card"><div class="card-title">Personale Interno - Ore e Lavorazioni</div>
+<div style="display:flex;gap:8px;font-size:9px;color:#7A8BA6;font-weight:700;margin-bottom:8px"><span style="flex:0.9">NOME</span><span style="max-width:60px">ORE</span><span style="flex:1.5">LAVORAZIONE SVOLTA OGGI</span><span style="width:28px"></span></div>
+<div id="lista-interni-scelta"></div>
+<button class="btn btn-ghost btn-small" onclick="addRigaInterno()">+ Aggiungi operaio</button>
+<div class="hint"><span class="dot"></span> Es: Claudio | 8h | Posa vetro cellulare piano terra + stuccatura</div>
+</div>
+<div class="card"><div class="card-title">Subappaltatori - Squadre esterne</div>
+<div style="display:flex;gap:8px;font-size:9px;color:#7A8BA6;font-weight:700;margin-bottom:8px"><span style="flex:1">DITTA</span><span style="max-width:45px">PERS</span><span style="max-width:60px">ORE</span><span style="flex:1.3">LAVORAZIONE</span><span style="width:28px"></span></div>
+<div id="lista-sub-scelta"></div>
+<button class="btn btn-ghost btn-small" onclick="addRigaSub()">+ Aggiungi subappaltatore</button>
+</div>
+<div class="card"><div class="card-title">Fornitori e Noli</div><div id="lista-forn-scelta"></div><button class="btn btn-ghost btn-small" onclick="addRigaForn()">+ Aggiungi fornitore / nolo</button></div>
+<div class="card"><div class="card-title">Lavori Generali e Note</div><label>Riepilogo lavori giornata</label><textarea id="lavori" placeholder="Descrivi i lavori generali eseguiti oggi..."></textarea><label style="margin-top:10px">Sicurezza / Note particolari</label><textarea id="sicurezza" placeholder="DPI, ponteggio, interferenze, note per DL..."></textarea></div>
+<button class="btn btn-primary" style="padding:16px;font-size:14px;letter-spacing:0.3px" onclick="salvaRapportino()">GENERA PDF + SALVA IN ARCHIVIO</button>
+<button class="btn btn-success" style="margin-top:10px" onclick="copiaWhatsApp()">COPIA TESTO WHATSAPP</button>
+</div>
+<div id="tab-cantieri" class="hidden">
+<div class="card"><div class="card-title">Nuovo Cantiere / Commessa</div><label>Codice breve (es. BUS)</label><input id="new-cant-cod" placeholder="BUS"><label>Nome commessa</label><input id="new-cant-nome" placeholder="Bussoleno - Ristrutturazione palazzina"><label>Indirizzo cantiere</label><input id="new-cant-ind" placeholder="Via... Bussoleno (TO)"><label>Cliente / Direzione Lavori</label><input id="new-cant-cliente" placeholder="Condominio, Privato, Impresa..."><button class="btn btn-primary" style="margin-top:12px" onclick="addCantiere()">SALVA CANTIERE</button></div>
+<div class="card"><div class="card-title">Cantieri Attivi</div><div id="list-cantieri"></div></div>
+</div>
+<div id="tab-dipendenti" class="hidden">
+<div class="card"><div class="card-title">Anagrafica Dipendenti</div><div style="display:flex;gap:10px"><div style="flex:1"><label>Nome e Cognome</label><input id="new-dip-nome" placeholder="Claudio Rossi"></div><div style="flex:1"><label>Mansione</label><input id="new-dip-mans" placeholder="Muratore specializzato"></div></div><button class="btn btn-primary" style="margin-top:12px" onclick="addDipendente()">SALVA DIPENDENTE</button><div class="hint">Le ore giornaliere e le lavorazioni si inseriscono nel rapportino, non qui.</div></div>
+<div class="card"><div class="card-title">Squadra Interna</div><div id="list-dipendenti"></div></div>
+</div>
+<div id="tab-ditte" class="hidden">
+<div class="card"><div class="card-title">Anagrafica Ditte Esterne</div><div style="display:flex;gap:10px"><div style="flex:1"><label>Tipo</label><select id="new-ditta-tipo"><option>Subappaltatore</option><option>Fornitore</option><option>Nolo</option></select></div><div style="flex:1.5"><label>Ragione Sociale</label><input id="new-ditta-nome" placeholder="Es: Elettro Impianti Srl"></div></div><label>Specializzazione</label><input id="new-ditta-spec" placeholder="Elettricista, Idraulico, Ponteggi, Ferro..."><button class="btn btn-primary" style="margin-top:12px" onclick="addDitta()">SALVA DITTA</button></div>
+<div class="card"><div class="card-title">Subappaltatori</div><div id="list-sub"></div></div>
+<div class="card"><div class="card-title">Fornitori e Noli</div><div id="list-forn"></div></div>
+</div>
+<div id="tab-archivio" class="hidden">
+<div class="card"><div class="card-title">Archivio Rapportini</div><label>Filtra per cantiere</label><select id="filtro-arch" onchange="renderArchivio()"></select><div id="list-archivio" style="margin-top:12px"></div><div style="display:flex;gap:8px;margin-top:14px"><button class="btn btn-ghost" style="flex:1" onclick="exportAll()">Backup</button><button class="btn btn-ghost" style="flex:1" onclick="importAll()">Ripristina</button></div></div>
+<div class="footer-note">Costruzioni Generali Camerlo S.R.L. - Cirie (TO) - Sistema Rapportini v4.0</div>
+</div>
+</div>
+<script>
+const { jsPDF } = window.jspdf;
+let DB = JSON.parse(localStorage.getItem('camerlo_db_v4')||'{"cantieri":[{"cod":"BUS","nome":"Bussoleno","indirizzo":"Bussoleno (TO)","cliente":""},{"cod":"CIR","nome":"Cirie - Sede","indirizzo":"Cirie","cliente":""}],"dipendenti":[{"nome":"Claudio","mansione":"Muratore"},{"nome":"Leo","mansione":"Manovale"}],"ditte":[{"tipo":"Subappaltatore","nome":"Elettricista Bianchi","spec":"Impianti elettrici"},{"tipo":"Fornitore","nome":"Edil Materiali Torino","spec":"Laterizi e cemento"}],"rapportini":[]}');
+function save(){ localStorage.setItem('camerlo_db_v4', JSON.stringify(DB)); refreshAll(); }
+function showTab(t){ document.querySelectorAll('[id^=tab-]').forEach(e=>e.classList.add('hidden')); document.getElementById('tab-'+t).classList.remove('hidden'); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); document.getElementById('b-'+t).classList.add('active'); if(t==='archivio') renderArchivio(); }
+document.getElementById('data').valueAsDate=new Date();
+function addCantiere(){ let cod=document.getElementById('new-cant-cod').value.trim().toUpperCase(); let nome=document.getElementById('new-cant-nome').value.trim(); if(!cod||!nome) return alert('Codice e nome obbligatori'); DB.cantieri.push({cod,nome,indirizzo:document.getElementById('new-cant-ind').value,cliente:document.getElementById('new-cant-cliente').value}); save(); document.getElementById('new-cant-cod').value=''; document.getElementById('new-cant-nome').value=''; document.getElementById('new-cant-ind').value=''; }
+function addDipendente(){ let nome=document.getElementById('new-dip-nome').value.trim(); if(!nome) return; DB.dipendenti.push({nome,mansione:document.getElementById('new-dip-mans').value}); save(); document.getElementById('new-dip-nome').value=''; }
+function addDitta(){ let nome=document.getElementById('new-ditta-nome').value.trim(); if(!nome) return; DB.ditte.push({tipo:document.getElementById('new-ditta-tipo').value,nome,spec:document.getElementById('new-ditta-spec').value}); save(); document.getElementById('new-ditta-nome').value=''; }
+function delItem(arr,idx){ if(!confirm('Eliminare?')) return; DB[arr].splice(idx,1); save(); }
+function refreshAll(){
+document.getElementById('tot').innerText=DB.rapportini.length+' RAPPORTINI';
+let selC=document.getElementById('sel-cantiere'); let filtro=document.getElementById('filtro-arch'); selC.innerHTML=''; filtro.innerHTML='<option value="">TUTTI I CANTIERI</option>';
+DB.cantieri.forEach(c=>{ let o=document.createElement('option'); o.value=c.cod; o.text=c.cod+' - '+c.nome; selC.appendChild(o); filtro.appendChild(o.cloneNode(true)); });
+let html=''; DB.cantieri.forEach((c,i)=> html+=<div class="item"&gt;&lt;div&gt;&lt;b&gt;${c.cod} - ${c.nome}&lt;/b&gt;&lt;br&gt;&lt;span style="font-size:11px;color:#7A8BA6"&gt;${c.indirizzo||''} ${c.cliente?' - '+c.cliente:''}&lt;/span&gt;&lt;/div&gt;&lt;button class="btn btn-ghost btn-small" onclick="delItem('cantieri',${i})">Elimina</button></div>); document.getElementById('list-cantieri').innerHTML=html; html=''; DB.dipendenti.forEach((d,i)=&gt; html+=<div class="item"><div><b>${d.nome}&lt;/b&gt;&lt;br&gt;&lt;span style="font-size:11px;color:#7A8BA6"&gt;${d.mansione}</span></div><button class="btn btn-ghost btn-small" onclick="delItem('dipendenti',${i})"&gt;Elimina&lt;/button&gt;&lt;/div>); document.getElementById('list-dipendenti').innerHTML=html;
+let htmlSub=''; let htmlForn=''; DB.ditte.forEach((d,i)=>{ let row=<div class="item"&gt;&lt;div&gt;&lt;b&gt;${d.nome}</b> <span style="font-size:9px;background:#EAF1FF;color:#0F2D52;padding:3px 7px;border-radius:20px;font-weight:700">${d.tipo}&lt;/span&gt;&lt;br&gt;&lt;span style="font-size:11px;color:#7A8BA6"&gt;${d.spec}</span></div><button class="btn btn-ghost btn-small" onclick="delItem('ditte',${i})"&gt;Elimina&lt;/button&gt;&lt;/div>; if(d.tipo==='Subappaltatore') htmlSub+=row; else htmlForn+=row; }); document.getElementById('list-sub').innerHTML=htmlSub||'<span style="font-size:12px;color:#888">Nessun subappaltatore</span>'; document.getElementById('list-forn').innerHTML=htmlForn||'<span style="font-size:12px;color:#888">Nessun fornitore</span>';
+renderArchivio();
+}
+function addRigaInterno(nome='',ore='8',lav=''){
+let div=document.createElement('div'); div.className='row';
+let opts=DB.dipendenti.map(d=><option ${d.nome===nome?'selected':''}>${d.nome}&lt;/option>).join('');
+div.innerHTML=<select style="flex:0.9"&gt;&lt;option value=""&gt;Seleziona dipendente&lt;/option&gt;${opts}</select><input style="max-width:60px" type="number" inputmode="decimal" value="${ore}" placeholder="Ore"&gt;&lt;input style="flex:1.5" value="${lav}" placeholder="Lavorazione svolta oggi"><button class="btn btn-ghost btn-small" onclick="this.parentElement.remove()">X</button>; document.getElementById('lista-interni-scelta').appendChild(div); } function addRigaSub(nome='',pers='1',ore='8',lav=''){ let div=document.createElement('div'); div.className='row'; let opts=DB.ditte.filter(d=&gt;d.tipo==='Subappaltatore').map(d=><option ${d.nome===nome?'selected':''}&gt;${d.nome}</option>).join(''); div.innerHTML=<select style="flex:1"><option value="">Ditta subappaltatrice</option>${opts}&lt;/select&gt;&lt;input type="number" value="${pers}" placeholder="N" style="max-width:45px"><input type="number" value="${ore}" placeholder="Ore" style="max-width:55px"&gt;&lt;input style="flex:1.3" value="${lav}" placeholder="Lavorazione"><button class="btn btn-ghost btn-small" onclick="this.parentElement.remove()">X</button>; document.getElementById('lista-sub-scelta').appendChild(div); } function addRigaForn(nome='',note=''){ let div=document.createElement('div'); div.className='row'; let opts=DB.ditte.filter(d=&gt;d.tipo!=='Subappaltatore').map(d=><option ${d.nome===nome?'selected':''}&gt;${d.nome}</option>).join(''); div.innerHTML=<select style="flex:1"><option value="">Seleziona fornitore</option>${opts}&lt;/select&gt;&lt;input style="flex:1.5" value="${note}" placeholder="Materiale / Nolo / DDT / Quantita"><button class="btn btn-ghost btn-small" onclick="this.parentElement.remove()">X</button>; document.getElementById('lista-forn-scelta').appendChild(div); } function collect(){ let interni=[]; document.querySelectorAll('#lista-interni-scelta .row').forEach(r=&gt;{ let nome=r.children[0].value; let ore=r.children[1].value; let lav=r.children[2].value; if(nome) interni.push({nome,ore,lav}); }); let subs=[]; document.querySelectorAll('#lista-sub-scelta .row').forEach(r=&gt;{ let nome=r.children[0].value; let pers=r.children[1].value; let ore=r.children[2].value; let lav=r.children[3].value; if(nome) subs.push({nome,pers,ore,lav}); }); let forns=[]; document.querySelectorAll('#lista-forn-scelta .row').forEach(r=&gt;{ let nome=r.children[0].value; let note=r.children[1].value; if(nome) forns.push({nome,note}); }); let cod=document.getElementById('sel-cantiere').value; let count=DB.rapportini.filter(x=&gt;x.cantiereCod===cod).length+1; return {cantiereCod:cod, cantiereNome:DB.cantieri.find(c=&gt;c.cod===cod)?.nome||cod, data:document.getElementById('data').value, meteo:document.getElementById('meteo').value, orario:document.getElementById('orario').value, interni, subs, forns, lavori:document.getElementById('lavori').value, sicurezza:document.getElementById('sicurezza').value, numero:count, ts:Date.now()}; } function salvaRapportino(){ let d=collect(); if(!d.interni.length && !d.subs.length && !d.lavori) return alert('Inserisci almeno un operaio o una lavorazione'); let doc=new jsPDF(); doc.setFillColor(15,45,82); doc.rect(0,0,210,32,'F'); doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('COSTRUZIONI GENERALI CAMERLO S.R.L.',14,13); doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.text('COSTRUZIONI EDILI - RISTRUTTURAZIONI - Cirie (TO)',14,19); doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.text((d.cantiereNome||'').toUpperCase()+' - '+d.cantiereCod,14,27); doc.setFillColor(255,122,0); doc.roundedRect(152,8,44,18,4,4,'F'); doc.setTextColor(255); doc.setFontSize(13); doc.text(d.cantiereCod+' '+d.numero+'/2026',154,19); doc.setTextColor(0); doc.setFontSize(10); let dataIt=d.data.split('-').reverse().join('/'); doc.setFont('helvetica','bold'); doc.text('Data: '+dataIt+' - N. '+d.cantiereCod+' '+d.numero+'/2026',14,42); doc.setFont('helvetica','normal'); doc.text('Meteo: '+d.meteo+' | Orario: '+d.orario,14,48); let y=56; doc.setFillColor(15,45,82); doc.rect(14,y,182,7,'F'); doc.setTextColor(255); doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.text('PERSONALE INTERNO - ORE E LAVORAZIONI',16,y+5); y+=10; doc.setTextColor(0); doc.setFont('helvetica','normal'); doc.setFontSize(9); d.interni.forEach(p=&gt;{ doc.text('- '+p.nome+' - '+p.ore+'h - '+p.lav,16,y); y+=5; }); y+=4; if(d.subs.length){ doc.setFillColor(60,60,60); doc.rect(14,y,182,7,'F'); doc.setTextColor(255); doc.text('SUBAPPALTATORI',16,y+5); y+=10; doc.setTextColor(0); d.subs.forEach(s=&gt;{ doc.text('- '+s.nome+' ('+s.pers+' pers. x '+s.ore+'h) - '+s.lav,16,y); y+=5; }); y+=4; } if(d.forns.length){ doc.setFillColor(100,100,100); doc.rect(14,y,182,7,'F'); doc.setTextColor(255); doc.text('FORNITORI / NOLI',16,y+5); y+=10; doc.setTextColor(0); d.forns.forEach(f=&gt;{ doc.text('- '+f.nome+' - '+f.note,16,y); y+=5; }); y+=4; } doc.setFillColor(15,45,82); doc.rect(14,y,182,7,'F'); doc.setTextColor(255); doc.text('LAVORI GENERALI / SICUREZZA',16,y+5); y+=10; doc.setTextColor(0); let txt=(d.lavori+' '+(d.sicurezza? '\nSicurezza: '+d.sicurezza:'')).trim(); let sp=doc.splitTextToSize(txt,178); doc.text(sp,16,y); doc.setFontSize(7); doc.setTextColor(120); doc.text('Generato da Costruzioni Generali Camerlo S.R.L. - Sistema Rapportini v4.0 - '+new Date().toLocaleString('it-IT'),14,290); let nomeFile=(d.numero+'').padStart(3,'0')+'_'+d.cantiereCod+'_'+dataIt.replaceAll('/','-')+'.pdf'; doc.save(nomeFile); DB.rapportini.unshift(d); save(); alert('Salvato: '+d.cantiereCod+' '+d.numero+'/2026'); } function copiaWhatsApp(){ let d=collect(); let dataIt=d.data.split('-').reverse().join('/'); let txt=COSTRUZIONI GENERALI CAMERLO S.R.L.\n${d.cantiereNome.toUpperCase()} (${d.cantiereCod})\nRapportino N. ${d.numero}/2026 del ${dataIt} - ${d.meteo} ${d.orario}\n\nPERSONALE INTERNO:\n; d.interni.forEach(p=&gt; txt+=- ${p.nome} | ${p.ore}h | ${p.lav}\n); if(d.subs.length){ txt+=\nSUBAPPALTATORI:\n; d.subs.forEach(s=> txt+=- ${s.nome} (${s.pers} pers. x ${s.ore}h) | ${s.lav}\n); } if(d.forns.length){ txt+=\nFORNITORI:\n; d.forns.forEach(f=> txt+=- ${f.nome} - ${f.note}\n); } if(d.lavori) txt+=\nLAVORI: ${d.lavori}\n; navigator.clipboard.writeText(txt).then(()=&gt;alert('Testo WhatsApp copiato!')); } function renderArchivio(){ let filtro=document.getElementById('filtro-arch').value; let list=document.getElementById('list-archivio'); let arr=DB.rapportini.filter(r=&gt;!filtro||r.cantiereCod===filtro); if(!arr.length) list.innerHTML='&lt;p style="font-size:11px;color:#888"&gt;Nessun rapportino in archivio&lt;/p&gt;'; else { let h=''; arr.forEach(r=&gt;{ let dataIt=r.data.split('-').reverse().join('/'); h+=<div class="item"><div><b>${r.cantiereCod} ${r.numero}/2026 - ${dataIt}&lt;/b&gt;&lt;br&gt;&lt;span style="font-size:11px;color:#7A8BA6"&gt;${r.cantiereNome} - ${r.interni.map(i=&gt;i.nome+':'+i.ore+'h').join(', ')}&lt;/span&gt;&lt;/div&gt;&lt;span style="font-size:10px;background:#EAF1FF;color:#0F2D52;padding:4px 8px;border-radius:20px;font-weight:700"&gt;${r.cantiereCod}&lt;/span&gt;&lt;/div>; }); list.innerHTML=h; } }
+function exportAll(){ let blob=new Blob([JSON.stringify(DB)],{type:'application/json'}); let url=URL.createObjectURL(blob); let a=document.createElement('a'); a.href=url; a.download='camerlo_db_v4_'+new Date().toISOString().slice(0,10)+'.json'; a.click(); }
+function importAll(){ let inp=document.createElement('input'); inp.type='file'; inp.accept='.json'; inp.onchange=e=>{ let fr=new FileReader(); fr.onload=()=>{ DB=JSON.parse(fr.result); save(); }; fr.readAsText(e.target.files[0]); }; inp.click(); }
+refreshAll(); addRigaInterno('Claudio','8','Posa vetro cellulare PT'); addRigaInterno('Leo','8','Posa vetro cellulare PT');
+</script>
+</body>
+</html>
